@@ -15,10 +15,25 @@
 # Env says we're using SSL
 if [ -n "${ENABLE_SSL+1}" ] && [ "${ENABLE_SSL,,}" = "true" ]; then
   echo "Enabling SSL..."
-  cp /usr/src/proxy_ssl.conf /etc/nginx/conf.d/proxy.conf
+  # If 301 redirect env var is enabled use those confs instead
+  if [ -n "${ENABLE_REDIRECT_CONFS}" ] && [ "${ENABLE_REDIRECT_CONFS,,}" = "true" ]; then
+    cp /usr/src/301-redirect_ssl.conf /etc/nginx/conf.d/301-redirect.conf
+    sed -i "s;{{REDIRECT_URL}};${REDIRECT_URL};g;" /etc/nginx/conf.d/301-redirect.conf
+    sed -i "s;{{BASE_URL}};${BASE_URL};g;" /etc/nginx/conf.d/301-redirect.conf
+    cp /usr/src/proxy_ssl.conf /etc/nginx/conf.d/proxy.conf
+  else
+    cp /usr/src/proxy_ssl.conf /etc/nginx/conf.d/proxy.conf
+  fi
 else
   # No SSL
-  cp /usr/src/proxy_nossl.conf /etc/nginx/conf.d/proxy.conf
+  if [ -n "${ENABLE_REDIRECT_CONFS}" ] && [ "${ENABLE_REDIRECT_CONFS,,}" = "true" ]; then
+    cp /usr/src/301-redirect_nossl.conf /etc/nginx/conf.d/301-redirect.conf
+    sed -i "s;{{REDIRECT_URL}};${REDIRECT_URL};g;" /etc/nginx/conf.d/301-redirect.conf
+    sed -i "s;{{BASE_URL}};${BASE_URL};g;" /etc/nginx/conf.d/301-redirect.conf
+    cp /usr/src/proxy_nossl.conf /etc/nginx/conf.d/proxy.conf
+  else
+    cp /usr/src/proxy_nossl.conf /etc/nginx/conf.d/proxy.conf
+  fi
 fi
 
 # If an htpasswd file is provided, download and configure nginx

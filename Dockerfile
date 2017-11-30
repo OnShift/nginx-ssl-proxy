@@ -28,6 +28,7 @@ WORKDIR /usr/src
 ADD start.sh /usr/src/
 ADD nginx/nginx.conf /etc/nginx/
 ADD nginx/proxy*.conf /usr/src/
+ADD nginx/301*.conf /usr/src/
 ADD nginx/extra/*.conf /etc/nginx/extra-conf.d/
 
 ENTRYPOINT ./start.sh
