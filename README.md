@@ -6,6 +6,10 @@ Build the image yourself by cloning this repository then running:
 
 ```shell
 docker build -t nginx-ssl-proxy .
+
+or
+
+docker build -t nginx-301-redirect .
 ```
 
 ## Using with Kubernetes
@@ -80,3 +84,16 @@ To run an SSL termination proxy you must have an existing SSL certificate and ke
     ```
 
    That way it is possible to setup additional proxies or modifying the nginx configuration.
+5. ***To enable 301 Redirect config**
+   ```shell
+   docker run \
+   -e ENABLE_SSL=true \
+   -e TARGET_SERVICE=0.0.0.0 \
+   -e REDIRECT_URL=URL_TO_REDIRECT \
+   -e BASE_URL=URL_TO_REDIRECT_TO \
+   -e ENABLE_REDIRECT_CONFS=true \
+   -v /path/to/secrets/cert.crt:/etc/secrets/proxycert \
+   -v /path/to/secrets/key.pem:/etc/secrets/proxykey \
+   -v /path/to/secrets/dhparam.pem:/etc/secrets/dhparam \
+   nginx-301-redirect
+   ```
