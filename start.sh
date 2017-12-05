@@ -17,18 +17,22 @@ if [ -n "${ENABLE_SSL+1}" ] && [ "${ENABLE_SSL,,}" = "true" ]; then
   echo "Enabling SSL..."
   # If 301 redirect env var is enabled use those confs instead
   if [ -n "${ENABLE_REDIRECT_CONFS}" ] && [ "${ENABLE_REDIRECT_CONFS,,}" = "true" ]; then
-    cp /usr/src/301-redirect_ssl.conf /etc/nginx/conf.d/301-redirect.conf
-    sed -i "s;{{REDIRECT_URL}};${REDIRECT_URL};g;" /etc/nginx/conf.d/301-redirect.conf
-    sed -i "s;{{BASE_URL}};${BASE_URL};g;" /etc/nginx/conf.d/301-redirect.conf
+    cp /usr/src/301-redirect_ssl.conf /etc/nginx/extra-conf.d/301-redirect.conf
+    sed -i "s;{{REDIRECT_URL}};${REDIRECT_URL};g;" /etc/nginx/extra-conf.d/301-redirect.conf
+    sed -i "s;{{BASE_URL}};${BASE_URL};g;" /etc/nginx/extra-conf.d/301-redirect.conf
+    sed -i "s/.*proxy.conf;//g" /etc/nginx/nginx.conf
+    cp /usr/src/proxy_ssl.conf /etc/nginx/conf.d/proxy.conf
   else
     cp /usr/src/proxy_ssl.conf /etc/nginx/conf.d/proxy.conf
   fi
 else
   # No SSL
   if [ -n "${ENABLE_REDIRECT_CONFS}" ] && [ "${ENABLE_REDIRECT_CONFS,,}" = "true" ]; then
-    cp /usr/src/301-redirect_nossl.conf /etc/nginx/conf.d/301-redirect.conf
-    sed -i "s;{{REDIRECT_URL}};${REDIRECT_URL};g;" /etc/nginx/conf.d/301-redirect.conf
-    sed -i "s;{{BASE_URL}};${BASE_URL};g;" /etc/nginx/conf.d/301-redirect.conf
+    cp /usr/src/301-redirect_nossl.conf /etc/nginx/extra-conf.d/301-redirect.conf
+    sed -i "s;{{REDIRECT_URL}};${REDIRECT_URL};g;" /etc/nginx/extra-conf.d/301-redirect.conf
+    sed -i "s;{{BASE_URL}};${BASE_URL};g;" /etc/nginx/extra-conf.d/301-redirect.conf
+    sed -i "s/.*proxy.conf;//g" /etc/nginx/nginx.conf
+    cp /usr/src/proxy_nossl.conf /etc/nginx/conf.d/proxy.conf
   else
     cp /usr/src/proxy_nossl.conf /etc/nginx/conf.d/proxy.conf
   fi
@@ -74,6 +78,9 @@ else
   sed -i "s;{{XFRAME_VALUE}};DENY;g;" /etc/nginx/conf.d/proxy.conf
 fi
 
+if [ -n "${ENABLE_REDIRECT_CONFS}" ] && [ "${ENABLE_REDIRECT_CONFS,,}" = "true" ]; then
+  rm -f /etc/nginx/conf.d/proxy.conf
+fi
 
 echo "Starting nginx..."
 nginx -g 'daemon off;'
