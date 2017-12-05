@@ -20,7 +20,6 @@ if [ -n "${ENABLE_SSL+1}" ] && [ "${ENABLE_SSL,,}" = "true" ]; then
     cp /usr/src/301-redirect_ssl.conf /etc/nginx/conf.d/301-redirect.conf
     sed -i "s;{{REDIRECT_URL}};${REDIRECT_URL};g;" /etc/nginx/conf.d/301-redirect.conf
     sed -i "s;{{BASE_URL}};${BASE_URL};g;" /etc/nginx/conf.d/301-redirect.conf
-    cp /usr/src/proxy_ssl.conf /etc/nginx/conf.d/proxy.conf
   else
     cp /usr/src/proxy_ssl.conf /etc/nginx/conf.d/proxy.conf
   fi
@@ -30,7 +29,6 @@ else
     cp /usr/src/301-redirect_nossl.conf /etc/nginx/conf.d/301-redirect.conf
     sed -i "s;{{REDIRECT_URL}};${REDIRECT_URL};g;" /etc/nginx/conf.d/301-redirect.conf
     sed -i "s;{{BASE_URL}};${BASE_URL};g;" /etc/nginx/conf.d/301-redirect.conf
-    cp /usr/src/proxy_nossl.conf /etc/nginx/conf.d/proxy.conf
   else
     cp /usr/src/proxy_nossl.conf /etc/nginx/conf.d/proxy.conf
   fi
